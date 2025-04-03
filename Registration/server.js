@@ -1,13 +1,26 @@
-const express = require ('express')
-const myRouter = require('./router')
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const patientRoutes = require('./routes/patientRoutes');
 
-const app = express()
+const app = express();
+const PORT = process.env.PORT || 5000;
 
-app.use(express.json())
+// Middleware
+app.use(bodyParser.json());
 
-app.listen(3000, () => {
-    console.log ('listening to port 3000')
+// Connect to MongoDB
+mongoose.connect('mongodb://localhost:27017/patientDB', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
 })
+.then(() => console.log("MongoDB Connected"))
+.catch(err => console.error("MongoDB Connection Failed:", err));
 
-app.use(myRouter)
+// Routes
+app.use('/patient', patientRoutes);
 
+// Start server
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
